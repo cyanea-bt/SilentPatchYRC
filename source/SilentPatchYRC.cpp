@@ -651,8 +651,8 @@ void OnInitializeHook()
 		else if (game == Game::Yakuza5) {
 			ofs << "Game:  " << "Yakuza 5" << std::endl;
 		}
-		ofs << "UTC:   " << s1 << std::endl;
 		ofs << "Local: " << s2 << std::endl;
+		ofs << "UTC:   " << s1 << std::endl;
 		ofs.close();
 	}
 }
