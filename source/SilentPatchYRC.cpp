@@ -11,6 +11,10 @@
 #include "Utils/Trampoline.h"
 #include "Utils/Patterns.h"
 
+#include <chrono>
+#include <format>
+#include <fstream>
+
 #if _DEBUG
 #define DEBUG_DOCUMENTS_PATH	1
 #else
@@ -626,5 +630,29 @@ void OnInitializeHook()
 
 			waitEvent = CreateEvent(nullptr, FALSE, TRUE, nullptr);
 		}
+	}
+
+	// log current time to file to get some feedback once hook is done
+	{
+		using namespace std::chrono;
+		const auto t1 = system_clock::now();
+		const auto s1 = std::format("{:%Y/%m/%d %H:%M:%S}", floor<seconds>(t1));
+		// to local time, ref: https://akrzemi1.wordpress.com/2022/04/24/local-time/
+		const auto tz = current_zone();
+		const auto t2 = tz->to_local(t1);
+		const auto s2 = std::format("{:%Y/%m/%d %H:%M:%S}", floor<seconds>(t2));
+		auto ofs = std::ofstream("SilentPatchYRC.txt", std::ios::binary | std::ios::trunc | std::ios::out);
+		if (game == Game::Yakuza3) {
+			ofs << "Game:  " << "Yakuza 3" << std::endl;
+		}
+		else if (game == Game::Yakuza4) {
+			ofs << "Game:  " << "Yakuza 4" << std::endl;
+		}
+		else if (game == Game::Yakuza5) {
+			ofs << "Game:  " << "Yakuza 5" << std::endl;
+		}
+		ofs << "Local: " << s2 << std::endl;
+		ofs << "UTC:   " << s1 << std::endl;
+		ofs.close();
 	}
 }
